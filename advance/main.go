@@ -43,7 +43,6 @@ func increment(server string) (int64, error) {
 		return 0, err
 	}
 
-	fmt.Printf(">> %s <<", string(resBody))
 	i, err := strconv.Atoi(string(resBody))
 	if err != nil {
 		return 0, err

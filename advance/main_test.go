@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -17,25 +16,14 @@ func TestIncrement(t *testing.T) {
 	_, err = microcksContainer.ImportAsMainArtifact(ctx, "./testdata/counter-api.yaml")
 	require.NoError(t, err)
 
-	uri, err := microcksCounterURI(ctx, microcksContainer)
+	endpoint, err := microcksContainer.HttpEndpoint(ctx)
 	require.NoError(t, err)
 
-	v, err := increment(uri)
+	baseApiUrl, err := microcksContainer.RestMockEndpoint(ctx, "CounterAPI", "0.0.1")
+	require.NoError(t, err)
+	require.Equal(t, endpoint+"/rest/CounterAPI/0.0.1", baseApiUrl)
+
+	v, err := increment(baseApiUrl)
 	require.NoError(t, err)
 	require.Equal(t, int64(20), v)
-}
-
-func microcksCounterURI(ctx context.Context, microcksContainer *microcksModule.MicrocksContainer) (string, error) {
-	ip, err := microcksContainer.Host(ctx)
-	if err != nil {
-		return "", err
-	}
-
-	mappedPort, err := microcksContainer.MappedPort(ctx, "8080")
-	if err != nil {
-		return "", err
-	}
-
-	uri := fmt.Sprintf("http://%s:%s/rest/Counter+API/1.0.0/", ip, mappedPort.Port())
-	return uri, nil
 }
