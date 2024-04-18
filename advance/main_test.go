@@ -23,7 +23,11 @@ func TestIncrement(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, endpoint+"/rest/CounterAPI/0.0.1", baseApiUrl)
 
-	v, err := increment(baseApiUrl)
+	v0, err := increment(baseApiUrl + "/")
 	require.NoError(t, err)
-	require.Equal(t, int64(20), v)
+	require.Equal(t, int64(0), v0)
+
+	v1, err := increment(baseApiUrl + "/")
+	require.NoError(t, err)
+	require.Equal(t, int64(1), v1)
 }

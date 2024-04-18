@@ -11,10 +11,15 @@ paths:
       x-microcks-operation:
         dispatcher: SCRIPT
         dispatcherRules: |-
-          def invJson = new URL("http://127.0.0.1:8080/api/metrics/invocations/Counter%20API/0.0.1").getText();
-          def inv = new groovy.json.JsonSlurper().parseText(invJson).dailyCount
-          log.info("daily invocation: " + inv)
-          requestContext.counter = inv;
+          def invJson = new URL("http://127.0.0.1:8080/api/metrics/invocations/CounterAPI/0.0.1").getText();
+          log.info("invJson: " + invJson)
+          if (invJson != null && !invJson.equals("")) {
+            def inv = new groovy.json.JsonSlurper().parseText(invJson).dailyCount
+            log.info("daily invocation: " + inv)
+            requestContext.counter = inv;
+          } else {
+            requestContext.counter = "0";
+          }
       responses:
         '200':
           description: Success counter
